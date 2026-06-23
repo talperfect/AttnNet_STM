@@ -1,0 +1,19 @@
+=============================================
+FOR MAT-ANN model
+=============================================
+hidden_dim = trial.suggest_int("hidden_size", 16, 128)  
+num_heads = trial.suggest_categorical("num_heads", [4,6,12,14])
+lr = trial.suggest_loguniform("lr", 1e-5, 1e-2) 
+epochs = trial.suggest_int("epochs", 100, 600)
+
+
+=============================================
+FOR stacking ensemble classifier
+=============================================
+
+'SVM': optimize_model(SVC(), {'C': (0.1, 10, 'log-uniform'),"gamma": (1e-6, 1.0, 'log-uniform')}, X_train, y_train),
+'XGBoost': optimize_model(XGBClassifier(), {'n_estimators': (50, 150),'learning_rate':(0.01,0.1), 'max_depth': (3, 10)}, X_train, y_train),
+'RF': optimize_model(RandomForestClassifier(), {'max_depth': (3, 15),'n_estimators': (50, 150),'min_samples_split': (2, 20),'min_samples_leaf': (1, 20)}, X_train, y_train),
+'LR': optimize_model(LogisticRegression(), {'max_iter': (100, 500),'C': (0.1, 10, 'log-uniform')}, X_train, y_train),
+'KNN': optimize_model(KNeighborsClassifier(), {'p': [1, 2],'weights': ['uniform', 'distance'],'n_neighbors': (3, 40)}, X_train, y_train)
+'MLP': Integer(16, 128, name='hidden_dim'), Real(1e-5, 1e-1, prior='log-uniform', name='lr'), Integer(10, 700, name='epochs')
